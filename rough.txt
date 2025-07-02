@@ -1,0 +1,68 @@
+class DHSClient:
+    def __init__(self, api_key=None, config_path=None, cache_dir=None):
+        """Initialize the DHS API client."""
+        # Setup authentication, configuration, and cache
+
+    def get_available_datasets(self, survey_type=None, country=None):
+        """Get a list of available datasets."""
+        
+    def get_datasets(self, dataset_ids=None, survey_ids=None):
+        """Download datasets by ID."""
+        
+    def get_indicators(self, indicator_ids=None, tags=None, survey_type=None):
+        """Get indicator data."""
+        
+    def get_countries(self):
+        """Get available countries."""
+        
+    def get_surveys(self, countries=None, survey_types=None, years=None):
+        """Get survey metadata."""
+        
+    def extract_data(self, dataset, variables=None):
+        """Extract specific variables from dataset."""
+
+class DHSAPI:
+    """Low-level DHS API wrapper."""
+    
+    BASE_URL = "https://api.dhsprogram.com/rest"
+    
+    def __init__(self, api_key=None):
+        self.api_key = api_key
+        self.session = self._create_session()
+    
+    def _create_session(self):
+        """Create an HTTP session with auth headers."""
+        
+    def get(self, endpoint, params=None):
+        """Make a GET request to the API."""
+        
+    def post(self, endpoint, data=None):
+        """Make a POST request to the API."""
+        
+    def get_available_datasets(self, params=None):
+        """Get available datasets with optional filters."""
+        
+    # Other API endpoint methods
+
+
+class DHSDataset:
+    """Base class for DHS datasets."""
+    
+    def __init__(self, metadata):
+        self.metadata = metadata
+        self.data = None
+        
+    def load(self, path=None):
+        """Load dataset from file or URL."""
+        
+    def to_pandas(self):
+        """Convert to pandas DataFrame."""
+        
+class SurveyDataset(DHSDataset):
+    """Class for survey datasets."""
+    
+    def extract_variables(self, variables):
+        """Extract specific variables."""
+        
+    def recode_variables(self, recode_map):
+        """Recode variable values."""
