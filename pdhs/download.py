@@ -6,7 +6,12 @@ import os
 import zipfile
 import pyreadstat
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from .datasets import GetDatasets
+
+dhs_password = os.getenv("DHS_PASSWORD")
 
 @dataclass
 class DHSDownloader:
@@ -215,7 +220,7 @@ print(df)
 
 downloader = DHSDownloader(
     email="adejumo999@gmail.com",
-    password="",
+    password=dhs_password,
     download_path="downloads",
     project_name="Rural and Urban",
     dataframe=df
