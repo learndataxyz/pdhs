@@ -19,7 +19,7 @@ class GetSurveys(DHSBaseAPI):
 class GetSurveyCharacteristics(DHSBaseAPI):
     _url_extension: str = "surveycharacteristics"
 
-survey_data = GetSurveys(
+"""survey_data = GetSurveys(
     country_ids=["NG"],
     survey_status="completed",
 )
@@ -32,4 +32,4 @@ survey_xtics = GetSurveyCharacteristics(
     survey_ids = ["DHS-2018"],
 )
 df2 = survey_xtics.get_data()
-print(df2)
+print(df2)"""

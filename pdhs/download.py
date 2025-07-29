@@ -1,10 +1,12 @@
 import polars as pl
 from dataclasses import dataclass
-from playwright.sync_api import sync_playwright
+from playwright.async_api import async_playwright
+from typing import Optional
 import requests
 import os
 import zipfile
 import pyreadstat
+import asyncio
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -39,21 +41,25 @@ class DHSDownloader:
 
     email: str
     password: str
-    download_path: str
     project_name: str
     dataframe: pl.DataFrame
+    download_path: Optional[str] = None
 
-    def download_all_datasets(self, dataset_ids: list):
+    def __post_init__(self):
+        if self.download_path is None:
+            self.download_path = "downloads"
+
+    async def download_all_datasets(self, dataset_ids: list):
         """
         Iterates over the provided dataset IDs and downloads each dataset.
         """
         for dataset_id in dataset_ids:
             try:
-                self._download_single_dataset(dataset_id)
+                await self._download_single_dataset(dataset_id)
             except ValueError as e:
                 print(f"Skipping dataset {dataset_id} due to error: {e}")
 
-    def _download_single_dataset(self, dataset_id: str):
+    async def _download_single_dataset(self, dataset_id: str):
         """
         Downloads a single dataset by filtering the dataframe and automating the download process.
         """
@@ -79,32 +85,32 @@ class DHSDownloader:
         print(f"Country Code: {country_code}")
         print(f"Survey ID: {survey_id}")
 
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            context = browser.new_context(accept_downloads=True)
-            page = context.new_page()
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True)
+            context = await browser.new_context(accept_downloads=True)
+            page = await context.new_page()
 
             # Navigate to the DHS login page
-            page.goto("https://dhsprogram.com/data/dataset_admin/login_main.cfm")
+            await page.goto("https://dhsprogram.com/data/dataset_admin/login_main.cfm")
 
             # Fill in the login form
-            page.fill("input[name='UserName']", self.email)
-            page.fill("input[name='UserPass']", self.password)
+            await page.fill("input[name='UserName']", self.email)
+            await page.fill("input[name='UserPass']", self.password)
 
             # Submit the login form
-            page.click("input[type='submit']")
+            await page.click("input[type='submit']")
 
             # Wait for navigation after login
-            page.wait_for_load_state("networkidle")
+            await page.wait_for_load_state("networkidle")
 
             # Select the project from the dropdown
-            page.select_option("select[name='proj_id']", label=self.project_name)
+            await page.select_option("select[name='proj_id']", label=self.project_name)
 
             # Wait for the project selection to complete
-            page.wait_for_load_state("networkidle")
+            await page.wait_for_load_state("networkidle")
 
             # Extract cookies from Playwright
-            cookies = context.cookies()
+            cookies = await context.cookies()
             session = requests.Session()
             for cookie in cookies:
                 session.cookies.set(cookie['name'], cookie['value'])
@@ -115,7 +121,7 @@ class DHSDownloader:
             self._download_file_with_session(session, download_url, save_path)
 
             # Close the browser
-            browser.close()
+            await browser.close()
 
     @staticmethod
     def _download_file_with_session(session, url, save_path):
@@ -128,6 +134,9 @@ class DHSDownloader:
             save_path (str): The local path where the file will be saved.
         """
         try:
+            # Create the directory if it doesn't exist
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+            
             response = session.get(url, stream=True)
             response.raise_for_status()
 
@@ -138,8 +147,6 @@ class DHSDownloader:
             print(f"File downloaded successfully and saved to {save_path}")
         except requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
-
-
 
     def load_dataset_as_dataframe(self, dataset_id: str) -> pl.DataFrame:
         """
@@ -208,31 +215,36 @@ class DHSDownloader:
         except Exception as e:
             print(f"An error occurred while loading the dataset: {e}")
 
-# Example usage
+"""# Main execution function
+async def main():
+    # Example usage
+    indicators_data = GetDatasets(
+        country_ids=["NG"],
+        file_format="DT"
+    )
 
-indicators_data = GetDatasets(
-    country_ids = ["NG"],
-    file_format = "DT"
-)
+    df = indicators_data.get_data()
+    print(df)
 
-df = indicators_data.get_data()
-print(df)
+    downloader = DHSDownloader(
+        email="adejumo999@gmail.com",
+        password=dhs_password,
+        download_path="my_files",
+        project_name="Rural and Urban",
+        dataframe=df
+    )
 
-downloader = DHSDownloader(
-    email="adejumo999@gmail.com",
-    password=dhs_password,
-    download_path="downloads",
-    project_name="Rural and Urban",
-    dataframe=df
-)
+    dataset_ids = ['NGHW21DT.ZIP', 'NGBR21dt.zip', 'NGKR21DT.ZIP']
+    await downloader.download_all_datasets(dataset_ids)
 
-dataset_ids = ['NGHW21DT.ZIP', 'NGBR21dt.zip','NGKR21DT.ZIP']
-downloader.download_all_datasets(dataset_ids)
+    # After downloading datasets
+    dataset_id = 'NGHW21DT.ZIP'  # Example ZIP dataset
+    df_loaded = downloader.load_dataset_as_dataframe(dataset_id)
 
-# After downloading datasets
-dataset_id = 'NGHW21DT.ZIP'  # Example ZIP dataset
-df = downloader.load_dataset_as_dataframe(dataset_id)
+    # Perform operations on the loaded DataFrame
+    if df_loaded is not None:
+        print(df_loaded.head())
 
-# Perform operations on the loaded DataFrame
-if df is not None:
-    print(df.head())
+# Run the async function
+if __name__ == "__main__":
+    asyncio.run(main())"""

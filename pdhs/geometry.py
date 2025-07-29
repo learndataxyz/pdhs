@@ -6,9 +6,9 @@ class GetGeometry(DHSBaseAPI):
     _url_extension: str = "geometry"
 
 
-geometry_data = GetGeometry(
+"""geometry_data = GetGeometry(
     country_ids = ["AL"]
 )
 
 df = geometry_data.get_data()
-print(df)
+print(df)"""

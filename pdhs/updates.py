@@ -42,9 +42,11 @@ class GetUIUpdates(DHSBaseAPI):
             self.url += f"&lastUpdates={self.last_update}"
 
 
+"""
 ui_update = GetUIUpdates(
     last_update="20150901"
 )
 
 df2 = ui_update.get_data()
 print(df2)
+"""

@@ -27,10 +27,10 @@ class GetDatasets(DHSBaseAPI):
         logging.info(f"Extended API URL constructed: {self.url}")
 
 
-indicators_data = GetDatasets(
+"""indicators_data = GetDatasets(
     country_ids = ["NG"],
     file_format = "DT"
 )
 
 df = indicators_data.get_data()
-print(df)
+print(df)"""

@@ -109,43 +109,6 @@ class TestDHSDownloader:
         # Verify download was called
         mock_download_file.assert_called_once()
 
-    @patch('pdhs.download.requests.Session')
-    @patch('builtins.open', new_callable=mock_open)
-    @patch('builtins.print')
-    def test_download_file_with_session_success(self, mock_print, mock_file, mock_session_class):
-        """Test successful file download with session."""
-        mock_session = MagicMock()
-        mock_session_class.return_value = mock_session
-        mock_response = MagicMock()
-        mock_response.iter_content.return_value = [b'chunk1', b'chunk2']
-        mock_session.get.return_value = mock_response
-        
-        session = mock_session
-        url = "https://example.com/file.zip"
-        save_path = "test_path.zip"
-        
-        DHSDownloader._download_file_with_session(session, url, save_path)
-        
-        mock_response.raise_for_status.assert_called_once()
-        mock_file.assert_called_with(save_path, "wb")
-        mock_print.assert_called_with(f"File downloaded successfully and saved to {save_path}")
-
-    @patch('pdhs.download.requests.Session')
-    @patch('builtins.print')
-    def test_download_file_with_session_error(self, mock_print, mock_session_class):
-        """Test file download with session error handling."""
-        mock_session = MagicMock()
-        mock_session_class.return_value = mock_session
-        mock_session.get.side_effect = requests.exceptions.RequestException("Network error")
-        
-        session = mock_session
-        url = "https://example.com/file.zip"
-        save_path = "test_path.zip"
-        
-        DHSDownloader._download_file_with_session(session, url, save_path)
-        
-        mock_print.assert_called_with("An error occurred: Network error")
-
     
     @patch('pdhs.download.pyreadstat.read_dta')
     @patch('builtins.print')

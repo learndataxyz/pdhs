@@ -8,9 +8,9 @@ class GetPublications(DHSBaseAPI):
     _url_extension: str = "publications"
 
 
-get_publications = GetPublications(
+"""get_publications = GetPublications(
     country_ids=["AL"],
 )
 
 df = get_publications.get_data()
-print(df)
+print(df)"""

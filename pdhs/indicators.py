@@ -46,7 +46,7 @@ class GetIndicators(DHSBaseAPI):
     _url_extension: str = "indicators"
 
 
-# Example usage
+"""# Example usage
 indicators_data = GetIndicatorsData(
     country_ids = ["AL"],
     characteristic_category=["wealth quintile", "region"],
@@ -70,3 +70,4 @@ df2 = indicators.get_data()
 print(df2)
 
 #df2.columns
+"""

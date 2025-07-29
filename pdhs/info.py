@@ -16,10 +16,10 @@ class GetInfo(DHSBaseAPI):
         super().__post_init__()
         self.url = f"http://api.dhsprogram.com/rest/dhs/info?infoType={self.info_type}"
 
-
+"""
 get_info = GetInfo(
     info_type = "citation"
 )
 
 df = get_info.get_data()
-print(df)
+print(df)"""
