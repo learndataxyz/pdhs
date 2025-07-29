@@ -33,6 +33,12 @@ You can install the latest version from
 pip install pdhs
 ```
 
+Note that to be able to download datasets from DHS, you need to have playwright installed, run the following command to install playwright on your PC.
+
+```shell
+playwright install
+```
+
 ## Getting started
 
 To be able to **download survey datasets from the DHS website**, you
@@ -52,7 +58,7 @@ then need to be provided to `pdhs` when attempting to download datasets.
 
 ### Query the [DHS API](https://api.dhsprogram.com/).
 
-Obtain survey estimates for the Total Fertility Rate among women from Albania belonging to the middle and second wealth quartile, and also categorized by Region.
+Obtain survey estimates for the Total Fertility Rate among women from Albania belonging to the middle and second wealth quintile, categorized by Region.
 
 ```py
 from pdhs.indicators import GetIndicatorsData, GetIndicators
