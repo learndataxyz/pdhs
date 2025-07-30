@@ -110,8 +110,6 @@ To determine which datasets to download, refer to the DHS website or use filteri
 > * Use `fileFormat = "SV"` for SPSS (.sav) — slower but fully reliable
 > * Use `fileFormat = "FL"` for flat (.dat) files — faster, but a few old datasets may not load correctly
 
-For example, the **household member recode (PR)** includes RDT status for children under five.
-
 ---
 
 ### Download Datasets
@@ -158,7 +156,7 @@ await downloader.download_all_datasets(dataset_ids)
 
 > **Note:** 
 >
-> * The `DHSDownloader()` class takes an argument `dataframe` which is a dataset derived from the `GetDatasets()` class. You have to filter the datasets you are interested in from the `GetDatasets()` class and pass the dataframe into the `DHSDownloader()` class.
+> * The `DHSDownloader()` class takes an argument `dataframe` which is a dataset derived from the `GetDatasets()` class. You have to pass the list of datasets you are interested into the `.download_all_datasets()` class to download them.
 
 ---
 
@@ -233,19 +231,25 @@ shape: (5, 7)
 By default, `pdhs` returns data as [Polars](https://pola.rs) DataFrames for performance. You can easily convert to Pandas:
 
 ```python
-# Convert to Pandas
+import pandas as pd
+
 df = df_loaded.to_pandas()
 df.head()
+
 ```
 
 <details>
 <summary>Sample Output</summary>
 
 ```text
+
 hwcaseid	hwline	hwlevel	hc70	hc71	hc72	hc73
 0	101 11 2	1	2	-74.0	-10.0	34.0	47.0
 1	101 11 2	2	2	-67.0	6.0	58.0	68.0
-...
+2	101 19 2	1	2	NaN	NaN	NaN	NaN
+3	101 19 2	2	2	NaN	NaN	NaN	NaN
+4	101 39 2	1	2	-258.0	-138.0	58.0	20.0
+
 ```
 
 </details>
