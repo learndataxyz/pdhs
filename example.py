@@ -17,7 +17,8 @@ async def main():
     )
 
     df = indicators_data.get_data()
-    print(df)
+
+    print(df.head())
 
     downloader = DHSDownloader(
         email="adejumo999@gmail.com",

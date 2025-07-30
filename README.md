@@ -2,80 +2,70 @@
 
 ## Motivation
 
-Access to high-quality, structured, and timely demographic and health data is essential for researchers, policymakers, and public health professionals. The Demographic and Health Surveys (DHS) program provides a rich repository of standardized datasets across countries and years, yet accessing and working with this data programmatically can be cumbersome due to inconsistencies in interfaces, authentication, and formatting.
+Access to high-quality, structured, and timely demographic and health data is essential for researchers, policymakers, and public health professionals. The [Demographic and Health Surveys (DHS) Program](https://www.dhsprogram.com) provides a rich repository of standardized datasets across countries and years. However, accessing and using this data programmatically can be cumbersome due to inconsistencies in interfaces, authentication requirements, and data formatting.
 
-The `pdhs` Python library aims to streamline and simplify interaction with the DHS API, offering an intuitive, well-documented, and Pythonic interface for querying, retrieving, and managing DHS datasets. By abstracting away low-level API details, `pdhs` empowers users to focus on analysis and application rather than data wrangling. It facilitates reproducible research, supports integration with data science workflows (e.g., pandas, numpy, matplotlib), and encourages broader use of DHS data in academic, development, and policy environments.
+The `pdhs` Python library aims to streamline and simplify interaction with the DHS API. It offers an intuitive, well-documented, and Pythonic interface for querying, retrieving, and managing DHS datasets. By abstracting low-level API complexities, `pdhs` allows users to focus on analysis and application rather than on data wrangling. It supports reproducible research, integrates smoothly with common data science workflows (e.g., pandas, numpy, matplotlib), and promotes broader usage of DHS data in academic, development, and policy contexts.
 
-In short, `pdhs` bridges the gap between powerful public data and the tools needed to extract meaningful insight from it.
+> In short, `pdhs` bridges the gap between powerful public data and the tools needed to derive meaningful insights from it.
 
------
+---
 
-`pdhs` is a package for management and analysis of [Demographic and
-Health Survey (DHS)](https://www.dhsprogram.com) data. This includes
-functionality to:
+`pdhs` is a package for managing and analyzing [Demographic and Health Survey (DHS)](https://www.dhsprogram.com) data. It provides functionality to:
 
-1.  Access standard indicator data (i.e. [DHS
-    STATcompiler](https://www.statcompiler.com/)) in Python via the [DHS
-    API](https://api.dhsprogram.com/).
-2.  Identify surveys and datasets relevant to a particular analysis.
-3.  Download survey datasets from the [DHS
-    website](https://dhsprogram.com/data/available-datasets.cfm).
-4.  Load datasets and associated metadata into Python.
-5.  Extract variables and combining datasets for pooled multi-survey
-    analyses.
+1. Access standard indicator data (via [DHS STATcompiler](https://www.statcompiler.com)) using the [DHS API](https://api.dhsprogram.com/).
+2. Identify surveys and datasets relevant to specific analyses.
+3. Download survey datasets from the [DHS website](https://dhsprogram.com/data/available-datasets.cfm).
+4. Load datasets and associated metadata into Python.
+5. Extract variables and combine datasets for pooled multi-survey analyses.
 
 ## Installation
 
-You can install the latest version from
-[`PyPi`](https://pypi.org/) using:
+Install the latest version from [PyPI](https://pypi.org/) using:
 
-``` python
+```bash
 pip install pdhs
-```
+````
 
-Note that to be able to download datasets from DHS, you need to have playwright installed, run the following command to install playwright on your PC.
+> **Note:** To download datasets from DHS, you must also install Playwright:
+>
+> ```bash
+> playwright install
+> ```
 
-```shell
-playwright install
-```
+---
 
-## Getting started
+## Getting Started
 
-To be able to **download survey datasets from the DHS website**, you
-will need to **set up an account with the DHS website**, which will
-enable you to request access to the datasets. Instructions on how to do
-this can be found
-[here](https://dhsprogram.com/data/Access-Instructions.cfm). The email,
-password, and project name that were used to create the account will
-then need to be provided to `pdhs` when attempting to download datasets.
+To **download survey datasets**, you must first [create an account with DHS](https://dhsprogram.com/data/Access-Instructions.cfm) and request access. You’ll need the **email**, **password**, and **project name** associated with your DHS account when using `pdhs`.
 
------
+* Request dataset access [here](https://dhsprogram.com/data/Access-Instructions.cfm)
 
-  - Request dataset access from the DHS website
-    [here](https://dhsprogram.com/data/Access-Instructions.cfm).
+---
 
 ## Basic Functionality
 
-### Query the [DHS API](https://api.dhsprogram.com/).
+### Query the [DHS API](https://api.dhsprogram.com)
 
-Obtain survey estimates for the Total Fertility Rate among women from Albania belonging to the middle and second wealth quintile, categorized by Region.
+The example below retrieves Total Fertility Rate estimates for Albanian women in the **middle** and **second** wealth quintiles, categorized by **region**:
 
-```py
+```python
 from pdhs.indicators import GetIndicatorsData, GetIndicators
 
 indicators_data = GetIndicatorsData(
-    country_ids = ["AL"],
+    country_ids=["AL"],
     characteristic_category=["wealth quintile", "region"],
     characteristic_label=["middle", "second"],
     breakdown="all"
 )
 
-
 fertility = indicators_data.get_data()
 print(fertility.head())
 ```
 
-```shell
+<details>
+<summary>Sample Output</summary>
+
+```text
 shape: (5, 28)
 ┌─────────┬───────────┬─────────────┬─────────────┬───┬────────┬─────────┬─────────────┬───────────┐
 │ DataId  ┆ SurveyId  ┆ Indicator   ┆ IsPreferred ┆ … ┆ CIHigh ┆ IsTotal ┆ ByVariableI ┆ LevelRank │
@@ -103,47 +93,163 @@ shape: (5, 28)
 │         ┆           ┆ specific    ┆             ┆   ┆        ┆         ┆             ┆           │
 │         ┆           ┆ fertility   ┆             ┆   ┆        ┆         ┆             ┆           │
 │         ┆           ┆ rate: 2…    ┆             ┆   ┆        ┆         ┆             ┆           │
-└─────────┴───────────┴─────────────┴─────────────┴───┴────────┴─────────┴─────────────┴───────────┘
+└─────────┴───────────┴─────────────┴─────────────┴───┴────────┴─────────┴─────────────┴───────────┘│
+...
 ```
 
-### Identify survey datasets
+</details>
+
+---
+
+### Identify Survey Datasets
+
+To determine which datasets to download, refer to the DHS website or use filtering options provided by the library.
+
+> **Recommendation:**
+>
+> * Use `fileFormat = "SV"` for SPSS (.sav) — slower but fully reliable
+> * Use `fileFormat = "FL"` for flat (.dat) files — faster, but a few old datasets may not load correctly
+
+For example, the **household member recode (PR)** includes RDT status for children under five.
+
+---
+
+### Download Datasets
+
+Once access has been granted, use the `DHSDownloader` to retrieve datasets using their IDs:
+
+```python
+import os
+import asyncio
+from dotenv import load_dotenv
+
+from pdhs.datasets import GetDatasets
+from pdhs.download import DHSDownloader
+
+load_dotenv()
+
+dhs_password = os.getenv("DHS_PASSWORD")
+
+data = GetDatasets(
+    country_ids=["NG"],
+    file_format="DT"
+)
 
 
-
-Lastly, identify the datasets required for download. By default, the
-recommended option is to download either the spss (.sav), `fileFormat =
-"SV"`, or the flat file (.dat), `fileFormat = "FL"` datasets. The flat
-is quicker, but there are still one or two very old datasets that don’t
-read correctly, whereas the .sav files are slower to read in but so far
-no datasets have been found that don’t read in correctly. The household
-member recode (`PR`) reports the RDT status for children under
-five.
+df = data.get_data()
 
 
+downloader = DHSDownloader(
+    email="<YOUR-DHS-EMAIL>",
+    password="<YOUR-DHS-PASSWORD>",
+    download_path="my_files",
+    project_name="Rural and Urban",
+    dataframe=df
+)
 
-### Download datasets
+dataset_ids = ['NGHW21DT.ZIP', 'NGBR21dt.zip', 'NGKR21DT.ZIP']
 
-We can now go ahead and download our datasets. To be able to download
-survey datasets from the DHS website, you will need to set up an account
-with them to enable you to request access to the datasets. Instructions
-on how to do this can be found
-[here](https://dhsprogram.com/data/Access-Instructions.cfm). The email,
-password, and project name that were used to create the account will
-then need to be provided to `rdhs` when attempting to download datasets.
+await downloader.download_all_datasets(dataset_ids)
+```
+> ✅ **Tips:**
+>
+> * Use `.env` variables to store credentials securely.
+> * Change the `download_path` argument to set your preferred download folder.
 
-Once we have created an account, we need to set up our credentials using
-the function `set_rdhs_config()`. This will require providing as
-arguments your `email` and `project` for which you want to download
-datasets from. You will then be prompted for your password.
+> **Note:** 
+>
+> * The `DHSDownloader()` class takes an argument `dataframe` which is a dataset derived from the `GetDatasets()` class. You have to filter the datasets you are interested in from the `GetDatasets()` class and pass the dataframe into the `DHSDownloader()` class.
 
-You can also specify a directory for datasets and API calls to be cached
-to using `cache_path`. In order to comply with CRAN, this function will
-also ask you for your permission to write to files outside your
-temporary directory, and you must type out the filename for the
-`config_path` - “rdhs.json”. (See [introduction
-vignette](https://docs.ropensci.org/rdhs/articles/introduction.html) for
-specific format for config, or `?set_rdhs_config`).
+---
+
+### Load Downloaded Data
+
+After downloading, load a dataset into memory as a Polars DataFrame:
+
+```python
+dataset_id = 'NGHW21DT.ZIP'  # Example ZIP dataset
+df_loaded = downloader.load_dataset_as_dataframe(dataset_id)
+```
+
+<details>
+<summary>Sample Output</summary>
+
+```text
+shape: (5, 13)
+┌───────────────┬──────────┬─────────────────┬───────────┬───┬────────────┬─────────────────┬──────────────┬─────────────┐
+│ FileFormat    ┆ FileSize ┆ DatasetType     ┆ SurveyNum ┆ … ┆ SurveyYear ┆ DHS_CountryCode ┆ FileName     ┆ CountryName │
+│ ---           ┆ ---      ┆ ---             ┆ ---       ┆   ┆ ---        ┆ ---             ┆ ---          ┆ ---         │
+│ str           ┆ i64      ┆ str             ┆ i64       ┆   ┆ str        ┆ str             ┆ str          ┆ str         │
+╞═══════════════╪══════════╪═════════════════╪═══════════╪═══╪════════════╪═════════════════╪══════════════╪═════════════╡
+│ Stata dataset ┆ 2563446  ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGBR21dt.zip ┆ Nigeria     │
+│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
+│ Stata dataset ┆ 505235   ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGHR21DT.ZIP ┆ Nigeria     │
+│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
+│ Stata dataset ┆ 76104    ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGHW21DT.ZIP ┆ Nigeria     │
+│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
+│ Stata dataset ┆ 3216090  ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGIR21DT.ZIP ┆ Nigeria     │
+│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
+│ Stata dataset ┆ 2067840  ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGKR21DT.ZIP ┆ Nigeria     │
+│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
+└───────────────┴──────────┴─────────────────┴───────────┴───┴────────────┴─────────────────┴──────────────┴─────────────┘
+Downloading dataset: NGHW21DT.ZIP
+Country Name: Nigeria
+Country Code: NG
+Survey ID: 32
+File downloaded successfully and saved to my_files/NGHW21DT.ZIP
+Downloading dataset: NGBR21dt.zip
+Country Name: Nigeria
+Country Code: NG
+Survey ID: 32
+File downloaded successfully and saved to my_files/NGBR21dt.zip
+Downloading dataset: NGKR21DT.ZIP
+Country Name: Nigeria
+Country Code: NG
+Survey ID: 32
+File downloaded successfully and saved to my_files/NGKR21DT.ZIP
+Extracted NGHW21DT.ZIP to my_files
+Selected file for loading: my_files/NGHW21FL.DTA
+Dataset NGHW21DT.ZIP loaded successfully.
+shape: (5, 7)
+┌─────────────────┬────────┬─────────┬──────┬──────┬──────┬──────┐
+│ hwcaseid        ┆ hwline ┆ hwlevel ┆ hc70 ┆ hc71 ┆ hc72 ┆ hc73 │
+│ ---             ┆ ---    ┆ ---     ┆ ---  ┆ ---  ┆ ---  ┆ ---  │
+│ str             ┆ i64    ┆ i64     ┆ i64  ┆ i64  ┆ i64  ┆ i64  │
+╞═════════════════╪════════╪═════════╪══════╪══════╪══════╪══════╡
+│       101 11  2 ┆ 1      ┆ 2       ┆ -74  ┆ -10  ┆ 34   ┆ 47   │
+│       101 11  2 ┆ 2      ┆ 2       ┆ -67  ┆ 6    ┆ 58   ┆ 68   │
+│       101 19  2 ┆ 1      ┆ 2       ┆ null ┆ null ┆ null ┆ null │
+│       101 19  2 ┆ 2      ┆ 2       ┆ null ┆ null ┆ null ┆ null │
+│       101 39  2 ┆ 1      ┆ 2       ┆ -258 ┆ -138 ┆ 58   ┆ 20   │
+└─────────────────┴────────┴─────────┴──────┴──────┴──────┴──────┘
+```
+
+</details>
+
+---
+
+### Convert to Pandas (Optional)
+
+By default, `pdhs` returns data as [Polars](https://pola.rs) DataFrames for performance. You can easily convert to Pandas:
+
+```python
+# Convert to Pandas
+df = df_loaded.to_pandas()
+df.head()
+```
+
+<details>
+<summary>Sample Output</summary>
+
+```text
+hwcaseid	hwline	hwlevel	hc70	hc71	hc72	hc73
+0	101 11 2	1	2	-74.0	-10.0	34.0	47.0
+1	101 11 2	2	2	-67.0	6.0	58.0	68.0
+...
+```
+
+</details>
+
+---
 
 
-
------
