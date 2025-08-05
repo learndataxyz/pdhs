@@ -99,34 +99,23 @@ shape: (5, 28)
 
 </details>
 
----
 
-### Identify Survey Datasets
+### Download Datasets
+
+To dowload DHS datasets using `pdhs`, you need to generate a dataframe using the `GetDatasets()` class specifying the country, and file format you want to download. 
 
 To determine which datasets to download, refer to the DHS website or use filtering options provided by the library.
 
+---
 > **Recommendation:**
 >
 > * Use `fileFormat = "SV"` for SPSS (.sav) — slower but fully reliable
 > * Use `fileFormat = "FL"` for flat (.dat) files — faster, but a few old datasets may not load correctly
-
 ---
 
-### Download Datasets
-
-Once access has been granted, use the `DHSDownloader` to retrieve datasets using their IDs:
-
 ```python
-import os
-import asyncio
-from dotenv import load_dotenv
 
 from pdhs.datasets import GetDatasets
-from pdhs.download import DHSDownloader
-
-load_dotenv()
-
-dhs_password = os.getenv("DHS_PASSWORD")
 
 data = GetDatasets(
     country_ids=["NG"],
@@ -135,7 +124,43 @@ data = GetDatasets(
 
 
 df = data.get_data()
+```
 
+<details>
+<summary>Sample Output</summary>
+
+```text
+shape: (5, 13)
+┌───────────────┬──────────┬─────────────────┬───────────┬───┬────────────┬─────────────────┬──────────────┬─────────────┐
+│ FileFormat    ┆ FileSize ┆ DatasetType     ┆ SurveyNum ┆ … ┆ SurveyYear ┆ DHS_CountryCode ┆ FileName     ┆ CountryName │
+│ ---           ┆ ---      ┆ ---             ┆ ---       ┆   ┆ ---        ┆ ---             ┆ ---          ┆ ---         │
+│ str           ┆ i64      ┆ str             ┆ i64       ┆   ┆ str        ┆ str             ┆ str          ┆ str         │
+╞═══════════════╪══════════╪═════════════════╪═══════════╪═══╪════════════╪═════════════════╪══════════════╪═════════════╡
+│ Stata dataset ┆ 2563446  ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGBR21dt.zip ┆ Nigeria     │
+│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
+│ Stata dataset ┆ 505235   ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGHR21DT.ZIP ┆ Nigeria     │
+│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
+│ Stata dataset ┆ 76104    ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGHW21DT.ZIP ┆ Nigeria     │
+│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
+│ Stata dataset ┆ 3216090  ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGIR21DT.ZIP ┆ Nigeria     │
+│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
+│ Stata dataset ┆ 2067840  ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGKR21DT.ZIP ┆ Nigeria     │
+│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
+└───────────────┴──────────┴─────────────────┴───────────┴───┴────────────┴─────────────────┴──────────────┴─────────────┘
+```
+</details>
+
+Once access has been granted, use the `DHSDownloader()` and pass a list of the datasets you are interested in downloading using the `.download_all_datasets()` method. 
+
+```python
+import os
+import asyncio
+from dotenv import load_dotenv
+from pdhs.download import DHSDownloader
+
+load_dotenv()
+
+dhs_password = os.getenv("DHS_PASSWORD")
 
 downloader = DHSDownloader(
     email="<YOUR-DHS-EMAIL>",
@@ -149,6 +174,7 @@ dataset_ids = ['NGHW21DT.ZIP', 'NGBR21dt.zip', 'NGKR21DT.ZIP']
 
 await downloader.download_all_datasets(dataset_ids)
 ```
+
 > ✅ **Tips:**
 >
 > * Use `.env` variables to store credentials securely.
@@ -173,23 +199,7 @@ df_loaded = downloader.load_dataset_as_dataframe(dataset_id)
 <summary>Sample Output</summary>
 
 ```text
-shape: (5, 13)
-┌───────────────┬──────────┬─────────────────┬───────────┬───┬────────────┬─────────────────┬──────────────┬─────────────┐
-│ FileFormat    ┆ FileSize ┆ DatasetType     ┆ SurveyNum ┆ … ┆ SurveyYear ┆ DHS_CountryCode ┆ FileName     ┆ CountryName │
-│ ---           ┆ ---      ┆ ---             ┆ ---       ┆   ┆ ---        ┆ ---             ┆ ---          ┆ ---         │
-│ str           ┆ i64      ┆ str             ┆ i64       ┆   ┆ str        ┆ str             ┆ str          ┆ str         │
-╞═══════════════╪══════════╪═════════════════╪═══════════╪═══╪════════════╪═════════════════╪══════════════╪═════════════╡
-│ Stata dataset ┆ 2563446  ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGBR21dt.zip ┆ Nigeria     │
-│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
-│ Stata dataset ┆ 505235   ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGHR21DT.ZIP ┆ Nigeria     │
-│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
-│ Stata dataset ┆ 76104    ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGHW21DT.ZIP ┆ Nigeria     │
-│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
-│ Stata dataset ┆ 3216090  ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGIR21DT.ZIP ┆ Nigeria     │
-│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
-│ Stata dataset ┆ 2067840  ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGKR21DT.ZIP ┆ Nigeria     │
-│ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
-└───────────────┴──────────┴─────────────────┴───────────┴───┴────────────┴─────────────────┴──────────────┴─────────────┘
+
 Downloading dataset: NGHW21DT.ZIP
 Country Name: Nigeria
 Country Code: NG

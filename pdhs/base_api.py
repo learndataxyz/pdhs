@@ -13,7 +13,7 @@ class DHSBaseAPI:
     """
     Base Class to fetch data from the DHS API.
     
-    Attributes:
+    Args:
         _url_extension: str
         country_ids (list): List of country IDs to filter the data.
         indicator_ids (list): List of indicator IDs to filter the data.
@@ -29,7 +29,6 @@ class DHSBaseAPI:
 
     """
     _url_extension: str
-    api_key = "ICLSPH-527168"
     country_ids: List[str] = field(default_factory=list)
     indicator_ids: List[str] = field(default_factory=list)
     survey_ids: List[str] = field(default_factory=list)
@@ -55,8 +54,7 @@ class DHSBaseAPI:
             f"surveyYearEnds={self._convert_query_list_to_string(self.survey_year_end)}&"
             f"surveyTypes={self._convert_query_list_to_string(self.survey_type)}&"
             f"surveyCharacteristicsIds={self._convert_query_list_to_string(self.survey_characteristics_ids)}&"
-            f"tagIds={self._convert_query_list_to_string(self.tagIds)}&"
-            f"apiKey={self.api_key}"
+            f"tagIds={self._convert_query_list_to_string(self.tagIds)}"
         )
         logging.info(f"API URL constructed: {self.url}")
 
@@ -119,7 +117,12 @@ class DHSBaseAPI:
             return None
 
     def get_data(self) -> Optional[pl.DataFrame]:
-        """Public method to return the final processed DataFrame."""
+        """
+        Public method to return the final processed DataFrame.
+
+        Returns:
+            Optional[pl.DataFrame]: Polars DataFrame or None if an error occurs.
+        """
         raw_data = self._fetch_data()
         df = self._convert_data_to_polars(raw_data)
         if df is None:
