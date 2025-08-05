@@ -14,7 +14,7 @@ class DHSBaseAPI:
     Base Class to fetch data from the DHS API.
     
     Args:
-        _url_extension: str
+
         country_ids (list): List of country IDs to filter the data.
         indicator_ids (list): List of indicator IDs to filter the data.
         survey_ids (list): List of survey IDs to filter the data.
@@ -25,7 +25,6 @@ class DHSBaseAPI:
         survey_characteristics_ids (list): List of survey characteristics IDs to filter the data.
         tagIds (list): List of tag IDs to filter the data.
         filter_fields (list): List of fields to filter the data.
-        _timeout (int): Request timeout in seconds.
 
     """
     _url_extension: str

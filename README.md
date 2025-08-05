@@ -49,7 +49,7 @@ To **download survey datasets**, you must first [create an account with DHS](htt
 The example below retrieves Total Fertility Rate estimates for Albanian women in the **middle** and **second** wealth quintiles, categorized by **region**:
 
 ```python
-from pdhs.indicators import GetIndicatorsData, GetIndicators
+from pdhs.indicators import GetIndicatorsData
 
 indicators_data = GetIndicatorsData(
     country_ids=["AL"],

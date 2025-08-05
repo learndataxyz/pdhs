@@ -5,8 +5,11 @@ from .base_api import DHSBaseAPI
 class GetCountries(DHSBaseAPI):
     """
     Class to fetch country data from the DHS API.
+
     Inherits from DHSBaseAPI and uses the 'countries' endpoint.
+
     Args:
+
         country_ids (list): List of country IDs to filter the data.
         indicator_ids (list): List of indicator IDs to filter the data.
         survey_ids (list): List of survey IDs to filter the data.
@@ -17,9 +20,13 @@ class GetCountries(DHSBaseAPI):
         survey_characteristics_ids (list): List of survey characteristics IDs to filter the data.
         tagIds (list): List of tag IDs to filter the data.
         filter_fields (list): List of fields to filter the data.
+
     Returns:
+        
         DataFrame: A polars DataFrame containing the country data.
+
     Example:
+
         countries_data = GetCountries(country_ids = ["AL"])
         df = countries_data.get_data()
         print(df)

@@ -11,7 +11,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 class GetDatasets(DHSBaseAPI):
     """
     Class to fetch datasets from the DHS API.
+
     Args:
+
         country_ids (list): List of country IDs to filter the data.
         indicator_ids (list): List of indicator IDs to filter the data.
         survey_ids (list): List of survey IDs to filter the data.
@@ -25,9 +27,13 @@ class GetDatasets(DHSBaseAPI):
         select_surveys (str): Comma-separated list of survey IDs to select.
         file_format (str): Format of the files to retrieve (e.g., "DT" for data tables).
         file_type (str): Type of the files to retrieve (e.g., "CSV", "JSON").
+
     Returns:
+
         DataFrame: A polars DataFrame containing the dataset information.
+
     Example:
+
         indicators_data = GetDatasets(country_ids = ["NG"], file_format = "DT")
         df = indicators_data.get_data()
         print(df)

@@ -3,6 +3,24 @@ from .base_api import DHSBaseAPI
 
 @dataclass
 class GetDataUpdates(DHSBaseAPI):
+    """
+    Class to fetch data updates from the DHS API.
+
+    Args:
+
+        last_update (str): The date of the last update in YYYYMMDD format.
+        This parameter is optional and can be used to filter updates since a specific date.
+        
+    Returns:
+
+        DataFrame: A polars DataFrame containing the data updates.  
+
+    Example:
+    
+        data_update = GetDataUpdates(last_update="20150901")
+        df = data_update.get_data()
+        print(df)
+    """
     _url_extension: str = "dataupdates"
     last_update: str = None
 
@@ -27,6 +45,21 @@ print(df)
 
 @dataclass
 class GetUIUpdates(DHSBaseAPI):
+    """
+    Class to fetch UI updates from the DHS API.
+
+    Args:
+        last_update (str): The date of the last update in YYYYMMDD format.
+        This parameter is optional and can be used to filter updates since a specific date.
+    
+    Returns:
+        DataFrame: A polars DataFrame containing the UI updates.
+
+    Example:
+        ui_update = GetUIUpdates(last_update="20150901")
+        df2 = ui_update.get_data()
+        print(df2)
+    """
     _url_extension: str = "uiupdates"
     last_update: str = None
 

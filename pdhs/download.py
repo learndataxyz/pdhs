@@ -8,12 +8,8 @@ import zipfile
 import pyreadstat
 import asyncio
 
-from dotenv import load_dotenv
-load_dotenv()
-
 from .datasets import GetDatasets
 
-dhs_password = os.getenv("DHS_PASSWORD")
 
 @dataclass
 class DHSDownloader:
@@ -23,7 +19,10 @@ class DHSDownloader:
     This class provides methods to authenticate with the DHS API, search for available datasets,
     and download selected datasets to a specified directory.
 
+    Requires Playwright for browser automation and requests for HTTP requests.
+
     Attributes:
+    
         username (str): DHS API username.
         password (str): DHS API password.
         download_dir (str): Directory where datasets will be saved.
@@ -31,12 +30,18 @@ class DHSDownloader:
         dataframe (pl.DataFrame): Polars DataFrame containing dataset metadata.
 
     Methods:
-        authenticate():
-            Authenticates the user with the DHS API.
-        list_datasets(country_code: str, survey_year: int) -> list:
-            Lists available datasets for a given country and survey year.
-        download(dataset_id: str) -> str:
-            Downloads the specified dataset and returns the local file path.
+
+        download_all_datasets(dataset_ids: list): Downloads all datasets specified by their IDs.
+        _download_single_dataset(dataset_id: str): Downloads a single dataset by its ID.
+        load_dataset_as_dataframe(dataset_id: str): Loads a downloaded dataset into a Polars DataFrame.
+
+    Example:
+    
+        downloader = DHSDownloader(
+            email="example@email.com",
+            password="your_password",
+            project_name="Your Project Name",
+            dataframe=GetDatasets(country_ids=["NG"], file_format="DT").get_data()
     """
 
     email: str
@@ -52,6 +57,8 @@ class DHSDownloader:
     async def download_all_datasets(self, dataset_ids: list):
         """
         Iterates over the provided dataset IDs and downloads each dataset.
+        Args:
+            dataset_ids (list): List of dataset IDs to download.
         """
         for dataset_id in dataset_ids:
             try:
