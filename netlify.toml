@@ -1,0 +1,11 @@
+[build]
+  command = """
+    curl -Ls https://astral.sh/uv/install.sh | bash &&
+    export PATH=$HOME/.cargo/bin:$PATH &&
+    uv pip install &&
+    mkdocs build
+  """
+  publish = "site"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
