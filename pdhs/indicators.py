@@ -13,7 +13,6 @@ class GetIndicatorsData(DHSBaseAPI):
     Class to fetch indicators data from the DHS API.
 
     Args:
-
         country_ids (list): List of country IDs to filter the data.
         indicator_ids (list): List of indicator IDs to filter the data.
         survey_ids (list): List of survey IDs to filter the data.
@@ -28,11 +27,11 @@ class GetIndicatorsData(DHSBaseAPI):
         breakdown (str): Breakdown type for the indicators.
 
     Returns:
-
         DataFrame: A polars DataFrame containing the indicators data.
 
     Example:
-    
+    ```python
+        from pdhs.indicators import GetIndicatorsData
         indicators_data = GetIndicatorsData(
             country_ids=["AL"],
             characteristic_category=["wealth quintile", "region"],
@@ -41,7 +40,7 @@ class GetIndicatorsData(DHSBaseAPI):
         )
         df = indicators_data.get_data()
         print(df)
-
+    ```
     """
     _url_extension: str = "data"
     characteristic_category: List[str] = field(default_factory=list)

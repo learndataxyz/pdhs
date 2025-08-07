@@ -1,16 +1,21 @@
 Metadata-Version: 2.4
 Name: pdhs
-Version: 0.1.4
+Version: 0.1.5
 Summary: Add your description here
 Requires-Python: >=3.9
 Description-Content-Type: text/markdown
 License-File: LICENSE
 Requires-Dist: git-filter-repo>=2.38.0
 Requires-Dist: httpx>=0.24.0
+Requires-Dist: mkdocs>=1.6.1
+Requires-Dist: mkdocs-material>=9.6.16
+Requires-Dist: mkdocstrings[python]>=0.30.0
 Requires-Dist: pandas>=1.3.0
+Requires-Dist: pdoc>=15.0.4
 Requires-Dist: playwright>=1.20.0
 Requires-Dist: polars>=0.18.0
 Requires-Dist: pyarrow>=8.0.0
+Requires-Dist: pygments>=2.19.1
 Requires-Dist: pyreadstat>=1.1.0
 Requires-Dist: pytest>=6.2.0
 Requires-Dist: python-dotenv>=0.19.0
@@ -69,7 +74,7 @@ To **download survey datasets**, you must first [create an account with DHS](htt
 The example below retrieves Total Fertility Rate estimates for Albanian women in the **middle** and **second** wealth quintiles, categorized by **region**:
 
 ```python
-from pdhs.indicators import GetIndicatorsData, GetIndicators
+from pdhs.indicators import GetIndicatorsData
 
 indicators_data = GetIndicatorsData(
     country_ids=["AL"],
@@ -119,36 +124,23 @@ shape: (5, 28)
 
 </details>
 
----
 
-### Identify Survey Datasets
+### Download Datasets
+
+To dowload DHS datasets using `pdhs`, you need to generate a dataframe using the `GetDatasets()` class specifying the country, and file format you want to download. 
 
 To determine which datasets to download, refer to the DHS website or use filtering options provided by the library.
 
+---
 > **Recommendation:**
 >
 > * Use `fileFormat = "SV"` for SPSS (.sav) — slower but fully reliable
 > * Use `fileFormat = "FL"` for flat (.dat) files — faster, but a few old datasets may not load correctly
-
-For example, the **household member recode (PR)** includes RDT status for children under five.
-
 ---
 
-### Download Datasets
-
-Once access has been granted, use the `DHSDownloader` to retrieve datasets using their IDs:
-
 ```python
-import os
-import asyncio
-from dotenv import load_dotenv
 
 from pdhs.datasets import GetDatasets
-from pdhs.download import DHSDownloader
-
-load_dotenv()
-
-dhs_password = os.getenv("DHS_PASSWORD")
 
 data = GetDatasets(
     country_ids=["NG"],
@@ -157,38 +149,6 @@ data = GetDatasets(
 
 
 df = data.get_data()
-
-
-downloader = DHSDownloader(
-    email="<YOUR-DHS-EMAIL>",
-    password="<YOUR-DHS-PASSWORD>",
-    download_path="my_files",
-    project_name="Rural and Urban",
-    dataframe=df
-)
-
-dataset_ids = ['NGHW21DT.ZIP', 'NGBR21dt.zip', 'NGKR21DT.ZIP']
-
-await downloader.download_all_datasets(dataset_ids)
-```
-> ✅ **Tips:**
->
-> * Use `.env` variables to store credentials securely.
-> * Change the `download_path` argument to set your preferred download folder.
-
-> **Note:** 
->
-> * The `DHSDownloader()` class takes an argument `dataframe` which is a dataset derived from the `GetDatasets()` class. You have to filter the datasets you are interested in from the `GetDatasets()` class and pass the dataframe into the `DHSDownloader()` class.
-
----
-
-### Load Downloaded Data
-
-After downloading, load a dataset into memory as a Polars DataFrame:
-
-```python
-dataset_id = 'NGHW21DT.ZIP'  # Example ZIP dataset
-df_loaded = downloader.load_dataset_as_dataframe(dataset_id)
 ```
 
 <details>
@@ -212,6 +172,59 @@ shape: (5, 13)
 │ Stata dataset ┆ 2067840  ┆ Survey Datasets ┆ 32        ┆ … ┆ 1990       ┆ NG              ┆ NGKR21DT.ZIP ┆ Nigeria     │
 │ (.dta)        ┆          ┆                 ┆           ┆   ┆            ┆                 ┆              ┆             │
 └───────────────┴──────────┴─────────────────┴───────────┴───┴────────────┴─────────────────┴──────────────┴─────────────┘
+```
+</details>
+
+Once access has been granted, use the `DHSDownloader()` and pass a list of the datasets you are interested in downloading using the `.download_all_datasets()` method. 
+
+```python
+import os
+import asyncio
+from dotenv import load_dotenv
+from pdhs.download import DHSDownloader
+
+load_dotenv()
+
+dhs_password = os.getenv("DHS_PASSWORD")
+
+downloader = DHSDownloader(
+    email="<YOUR-DHS-EMAIL>",
+    password="<YOUR-DHS-PASSWORD>",
+    download_path="my_files",
+    project_name="Rural and Urban",
+    dataframe=df
+)
+
+dataset_ids = ['NGHW21DT.ZIP', 'NGBR21dt.zip', 'NGKR21DT.ZIP']
+
+await downloader.download_all_datasets(dataset_ids)
+```
+
+> ✅ **Tips:**
+>
+> * Use `.env` variables to store credentials securely.
+> * Change the `download_path` argument to set your preferred download folder.
+
+> **Note:** 
+>
+> * The `DHSDownloader()` class takes an argument `dataframe` which is a dataset derived from the `GetDatasets()` class. You have to pass the list of datasets you are interested into the `.download_all_datasets()` class to download them.
+
+---
+
+### Load Downloaded Data
+
+After downloading, load a dataset into memory as a Polars DataFrame:
+
+```python
+dataset_id = 'NGHW21DT.ZIP'  # Example ZIP dataset
+df_loaded = downloader.load_dataset_as_dataframe(dataset_id)
+```
+
+<details>
+<summary>Sample Output</summary>
+
+```text
+
 Downloading dataset: NGHW21DT.ZIP
 Country Name: Nigeria
 Country Code: NG
@@ -253,19 +266,25 @@ shape: (5, 7)
 By default, `pdhs` returns data as [Polars](https://pola.rs) DataFrames for performance. You can easily convert to Pandas:
 
 ```python
-# Convert to Pandas
+import pandas as pd
+
 df = df_loaded.to_pandas()
 df.head()
+
 ```
 
 <details>
 <summary>Sample Output</summary>
 
 ```text
+
 hwcaseid	hwline	hwlevel	hc70	hc71	hc72	hc73
 0	101 11 2	1	2	-74.0	-10.0	34.0	47.0
 1	101 11 2	2	2	-67.0	6.0	58.0	68.0
-...
+2	101 19 2	1	2	NaN	NaN	NaN	NaN
+3	101 19 2	2	2	NaN	NaN	NaN	NaN
+4	101 39 2	1	2	-258.0	-138.0	58.0	20.0
+
 ```
 
 </details>

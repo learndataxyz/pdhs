@@ -21,8 +21,7 @@ class DHSDownloader:
 
     Requires Playwright for browser automation and requests for HTTP requests.
 
-    Attributes:
-    
+    Args:
         username (str): DHS API username.
         password (str): DHS API password.
         download_dir (str): Directory where datasets will be saved.
@@ -30,18 +29,18 @@ class DHSDownloader:
         dataframe (pl.DataFrame): Polars DataFrame containing dataset metadata.
 
     Methods:
-
         download_all_datasets(dataset_ids: list): Downloads all datasets specified by their IDs.
-        _download_single_dataset(dataset_id: str): Downloads a single dataset by its ID.
         load_dataset_as_dataframe(dataset_id: str): Loads a downloaded dataset into a Polars DataFrame.
 
     Example:
-    
+    ```python
+        from pdhs.download import DHSDownloader
         downloader = DHSDownloader(
             email="example@email.com",
             password="your_password",
             project_name="Your Project Name",
             dataframe=GetDatasets(country_ids=["NG"], file_format="DT").get_data()
+    ```
     """
 
     email: str

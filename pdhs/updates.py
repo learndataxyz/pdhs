@@ -7,19 +7,19 @@ class GetDataUpdates(DHSBaseAPI):
     Class to fetch data updates from the DHS API.
 
     Args:
-
         last_update (str): The date of the last update in YYYYMMDD format.
         This parameter is optional and can be used to filter updates since a specific date.
         
     Returns:
-
         DataFrame: A polars DataFrame containing the data updates.  
 
     Example:
-    
+    ```python
+        from pdhs.updates import GetDataUpdates
         data_update = GetDataUpdates(last_update="20150901")
         df = data_update.get_data()
         print(df)
+    ```
     """
     _url_extension: str = "dataupdates"
     last_update: str = None

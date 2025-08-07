@@ -7,18 +7,18 @@ class GetInfo(DHSBaseAPI):
     Class to fetch information from the DHS API.
 
     Args:
-    
         info_type (str): Type of information to retrieve (e.g., "version", "citation").
 
     Returns:
-
         DataFrame: A polars DataFrame containing the requested information.
 
     Example:
-
+    ```python
+        from pdhs.info import GetInfo
         get_info = GetInfo(info_type="citation")
         df = get_info.get_data()
         print(df)
+    ```
     """
     _url_extension: str = "info"
     info_type: str = "version"

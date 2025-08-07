@@ -14,7 +14,6 @@ class DHSBaseAPI:
     Base Class to fetch data from the DHS API.
     
     Args:
-
         country_ids (list): List of country IDs to filter the data.
         indicator_ids (list): List of indicator IDs to filter the data.
         survey_ids (list): List of survey IDs to filter the data.

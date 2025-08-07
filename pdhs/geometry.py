@@ -7,7 +7,6 @@ class GetGeometry(DHSBaseAPI):
     Class to fetch geometry data from the DHS API.
 
     Args:
-    
         country_ids (list): List of country IDs to filter the data.
         indicator_ids (list): List of indicator IDs to filter the data.
         survey_ids (list): List of survey IDs to filter the data.
@@ -21,14 +20,16 @@ class GetGeometry(DHSBaseAPI):
         country_ids (list): List of country IDs to filter the data.
 
     Returns:
-
         DataFrame: A polars DataFrame containing the geometry data.
 
     Example:
-
+    ```python
+        from pdhs.geometry import GetGeometry
         geometry_data = GetGeometry(country_ids = ["AL"])
         df = geometry_data.get_data()
         print(df)
+
+     ```
     """
     _url_extension: str = "geometry"
 

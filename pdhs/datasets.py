@@ -13,7 +13,6 @@ class GetDatasets(DHSBaseAPI):
     Class to fetch datasets from the DHS API.
 
     Args:
-
         country_ids (list): List of country IDs to filter the data.
         indicator_ids (list): List of indicator IDs to filter the data.
         survey_ids (list): List of survey IDs to filter the data.
@@ -29,14 +28,15 @@ class GetDatasets(DHSBaseAPI):
         file_type (str): Type of the files to retrieve (e.g., "CSV", "JSON").
 
     Returns:
-
         DataFrame: A polars DataFrame containing the dataset information.
 
     Example:
-
+    ```python
+        from pdhs.datasets import GetDatasets
         indicators_data = GetDatasets(country_ids = ["NG"], file_format = "DT")
         df = indicators_data.get_data()
         print(df)
+    ```
     """
     _url_extension: str = "datasets"
     select_surveys: str = None

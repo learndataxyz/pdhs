@@ -9,7 +9,6 @@ class GetCountries(DHSBaseAPI):
     Inherits from DHSBaseAPI and uses the 'countries' endpoint.
 
     Args:
-
         country_ids (list): List of country IDs to filter the data.
         indicator_ids (list): List of indicator IDs to filter the data.
         survey_ids (list): List of survey IDs to filter the data.
@@ -22,14 +21,15 @@ class GetCountries(DHSBaseAPI):
         filter_fields (list): List of fields to filter the data.
 
     Returns:
-        
         DataFrame: A polars DataFrame containing the country data.
 
     Example:
-
+    ```python
+        from pdhs.countries import GetCountries
         countries_data = GetCountries(country_ids = ["AL"])
         df = countries_data.get_data()
         print(df)
+    ```
     """
     _url_extension: str = "countries"
 

@@ -9,7 +9,6 @@ class GetSurveys(DHSBaseAPI):
     Class to fetch survey data from the DHS API.
 
     Args:
-
         country_ids (list): List of country IDs to filter the data.
         survey_status (str): Status of the surveys to filter (e.g., "completed", "ongoing").
         indicator_ids (list): List of indicator IDs to filter the data.
@@ -22,17 +21,18 @@ class GetSurveys(DHSBaseAPI):
         tagIds (list): List of tag IDs to filter the data.
     
     Returns:
-
         DataFrame: A polars DataFrame containing the survey data.
     
     Example:
-    
+    ```python
+        from pdhs.surveys import GetSurveys
         survey_data = GetSurveys(
             country_ids=["NG"],
             survey_status="completed",
         )
         df = survey_data.get_data()
         print(df)   
+    ```
     """
     _url_extension: str = "surveys"
     survey_status: str = None
